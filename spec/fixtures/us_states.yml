@@ -2,6 +2,7 @@
   name: "Alabama"
 - code: "AK"
   name: "Alaska"
+  contiguous: false
 - code: "AZ"
   name: "Arizona"
 - code: "AR"
@@ -20,6 +21,7 @@
   name: "Georgia"
 - code: "HI"
   name: "Hawaii"
+  contiguous: false
 - code: "ID"
   name: "Idaho"
 - code: "IL"
