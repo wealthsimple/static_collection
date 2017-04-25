@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Peter Graham"]
   spec.email         = ["peter@wealthsimple.com"]
 
-  spec.summary       = %q{Run queries against static YAML data.}
-  spec.description   = %q{Rubygem for running basic queries against static YAML data.}
+  spec.summary       = %q{Run queries against static data.}
+  spec.description   = %q{Rubygem for running basic queries against static data.}
   spec.homepage      = "https://github.com/wealthsimple/static_collection"
   spec.license       = "MIT"
 
