@@ -50,7 +50,7 @@ StaticCollection supports the following query methods: `:count`, `:all`, `:find_
 => "multi-owner"
 ```
 
-To see the full `AccountType` example, take a look at our [blog post] (http://code.wealthsimple.com/introducing-staticcollection-an-activerecord-interface-for-static-data/).
+To see the full `AccountType` example, take a look at our [blog post](http://code.wealthsimple.com/introducing-staticcollection-an-activerecord-interface-for-static-data/).
 
 ## Development
 
