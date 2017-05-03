@@ -34,6 +34,10 @@ module StaticCollection
     end
     singleton_class.send(:alias_method, :size, :count)
 
+    def self.scope(name, body)
+      self.define_singleton_method(name) { |*args| body.call(*args) }
+    end
+
     attr_reader :attributes
     def initialize(attributes = {})
       @attributes = attributes

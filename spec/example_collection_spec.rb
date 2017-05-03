@@ -2,6 +2,11 @@ require "yaml"
 
 class ExampleCollection < StaticCollection::Base
   set_source YAML.load_file("./spec/fixtures/us_states.yml"), defaults: {contiguous: true}
+
+  scope :non_contiguous, -> { find_all_by_contiguous(false) }
+  scope :starting_with_letter, ->(letter) do
+    all.select { |state| state.name.start_with?(letter) }
+  end
 end
 
 describe ExampleCollection do
@@ -68,6 +73,20 @@ describe ExampleCollection do
       all_states = described_class.all
       expect(all_states).to be_a(Array)
       expect(all_states.first.name).to eq("Alabama")
+    end
+  end
+
+  describe "scopes" do
+    it "works correctly for scopes without args" do
+      expect(described_class.non_contiguous.map(&:name)).to eq(["Alaska", "Hawaii"])
+    end
+
+    it "works correctly for scopes with args" do
+      expect(described_class.starting_with_letter("O").map(&:name)).to eq(["Ohio", "Oklahoma", "Oregon"])
+    end
+
+    xit "can chain scopes" do
+      expect(described_class.non_contiguous.starting_with_letter("H").map(&:name)).to eq(["Hawaii"])
     end
   end
 
