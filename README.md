@@ -20,7 +20,37 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+To create a StaticCollection model, inherit from `StaticCollection::Base`
+
+```ruby
+class AccountType < StaticCollection::Base
+end
+```
+
+Then set the source for the static collection data. To read from YAML,
+
+```ruby
+class AccountType < StaticCollection::Base
+  set_source YAML.load_file('./data/account_types_test.yml')
+end
+```
+
+To set a default value for an attribute, pass a defaults hash into `set_source`
+
+```ruby
+class AccountType < StaticCollection::Base
+  set_source YAML.load_file('./data/account_types_test.yml'), defaults: { recommended_by_default: false }
+end
+```
+
+StaticCollection supports the following query methods: `:count`, `:all`, `:find_by_#{attribute}`, and `:find_all_by_#{attribute}`.
+
+```ruby
+> AccountType.find_by_type('joint').ownership_type
+=> "multi-owner"
+```
+
+To see the full `AccountType` example, take a look at our [blog post] (http://code.wealthsimple.com/introducing-staticcollection-an-activerecord-interface-for-static-data/).
 
 ## Development
 
