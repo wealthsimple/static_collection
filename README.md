@@ -43,10 +43,10 @@ class AccountType < StaticCollection::Base
 end
 ```
 
-StaticCollection supports the following query methods: `:count`, `:all`, `:find_by_#{attribute}`, and `:find_all_by_#{attribute}`.
+StaticCollection supports the following query methods: `:count`, `:all`, `:find_by`, and `:where`.
 
 ```ruby
-> AccountType.find_by_type('joint').ownership_type
+> AccountType.find_by(type: 'joint').ownership_type
 => "multi-owner"
 ```
 
