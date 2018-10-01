@@ -12,9 +12,11 @@ module StaticCollection
       all.first.attributes.each do |attribute_name, attribute_value|
         # Class methods
         self.define_singleton_method("find_by_#{attribute_name}") do |value|
+          ActiveSupport::Deprecation.warn("find_by_#{attribute_name} is deprecated for StaticCollection, use find_by(#{attribute_name}: [value])")
           all.find { |instance| instance.send(attribute_name) == value }
         end
         self.define_singleton_method("find_all_by_#{attribute_name}") do |value|
+          ActiveSupport::Deprecation.warn("find_all_by_#{attribute_name} is deprecated for StaticCollection, use where(#{attribute_name}: [value])")
           all.select { |instance| instance.send(attribute_name) == value }
         end
 
