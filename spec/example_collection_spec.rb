@@ -51,6 +51,52 @@ describe ExampleCollection do
     end
   end
 
+  describe '#find_by' do
+    context "Maine" do
+      it "returns a single record corresponding to the query" do
+        maine = described_class.find_by(code: "ME")
+        expect(maine).to be_present
+        expect(maine.code).to eq("ME")
+        expect(maine.name).to eq("Maine")
+        expect(maine).to be_contiguous
+      end
+    end
+
+    context "Hawaii" do
+      it "returns a single record corresponding to the query" do
+        hawaii = described_class.find_by(code: "HI")
+        expect(hawaii).to be_present
+        expect(hawaii.code).to eq("HI")
+        expect(hawaii.name).to eq("Hawaii")
+        expect(hawaii).not_to be_contiguous
+      end
+    end
+
+    context "invalid query" do
+      it "returns nil" do
+        invalid = described_class.find_by(code: "INVALID")
+        expect(invalid).to be_nil
+      end
+    end
+  end
+
+  describe '#where' do
+    context "with a valid query" do
+      it "returns all matching records" do
+        non_contiguous_states = described_class.where(contiguous: false)
+        expect(non_contiguous_states).to be_a(Array)
+        expect(non_contiguous_states.map(&:name)).to eq(["Alaska", "Hawaii"])
+      end
+    end
+
+    context "with an invalid query" do
+      it "returns empty array" do
+        invalid = described_class.where(code: "INVALID")
+        expect(invalid).to eq([])
+      end
+    end
+  end
+
   describe ".count" do
     subject { described_class.count }
 
