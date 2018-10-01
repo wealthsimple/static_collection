@@ -24,6 +24,14 @@ module StaticCollection
       end
     end
 
+    def self.find_by(opts)
+      all.find { |instance| opts.all? { |k, v| instance.send(k) == v } }
+    end
+
+    def self.where(opts)
+      all.select { |instance| opts.all? { |k, v| instance.send(k) == v } }
+    end
+
     def self.all
       defaults = self.class_variable_get(:@@defaults)
       self.class_variable_get(:@@source).map { |s| self.new(defaults.merge(s)) }
