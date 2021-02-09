@@ -1,0 +1,11 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: static_collection
+  description: Rubygem for running basic queries against static data
+  tags:
+    - ruby
+spec:
+  type: library
+  lifecycle: production
