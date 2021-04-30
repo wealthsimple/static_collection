@@ -1,0 +1,28 @@
+---
+name: Branches
+on:
+  push:
+    branches-ignore:
+      - main
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+        env:
+          BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.BUNDLE_GEMS__CONTRIBSYS__COM }}
+          BUNDLE_NEXUS__IAD__W10EXTERNAL__COM: ${{ secrets.BUNDLE_NEXUS__IAD__W10EXTERNAL__COM }}
+      - name: Fetch main branch
+        run: git fetch origin main
+      - name: Lint
+        uses: wealthsimple/toolbox-script@v1
+        with:
+          script: await toolbox.ruby.lint.run();
+      - name: Test
+        uses: wealthsimple/toolbox-script@v1
+        with:
+          script: await toolbox.ruby.test.run();

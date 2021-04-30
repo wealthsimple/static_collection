@@ -1,4 +1,5 @@
-# StaticCollection [![CircleCI](https://circleci.com/gh/wealthsimple/static_collection.svg?style=svg)](https://circleci.com/gh/wealthsimple/static_collection) [![](https://img.shields.io/gem/v/static_collection.svg)](https://rubygems.org/gems/static_collection)
+# 
+[![GitHub Actions Badge](https://github.com/wealthsimple//actions/workflows/main.yml/badge.svg)](https://github.com/wealthsimple//actions)
 
 Rubygem for running basic queries against static data.
 
