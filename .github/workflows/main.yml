@@ -1,9 +1,6 @@
 ---
-name: Main
-on:
-  push:
-    branches:
-      - main
+name: Pipeline
+on: push
 jobs:
   build:
     name: Build
@@ -13,21 +10,22 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-        env:
-          BUNDLE_GEMS__CONTRIBSYS__COM: ${{ secrets.BUNDLE_GEMS__CONTRIBSYS__COM }}
-          BUNDLE_NEXUS__IAD__W10EXTERNAL__COM: ${{ secrets.BUNDLE_NEXUS__IAD__W10EXTERNAL__COM }}
-      - name: Fetch main branch
-        run: git fetch origin main
       - name: Lint
-        uses: wealthsimple/toolbox-script@v1
-        with:
-          script: await toolbox.ruby.lint.run();
+        run: bundle exec rubocop
       - name: Test
-        uses: wealthsimple/toolbox-script@v1
-        with:
-          script: await toolbox.ruby.test.run();
-      - name: Release
-        uses: wealthsimple/toolbox-script@v1
-        with:
-          script: await toolbox.ruby.publish.run();
-          nexus_gem_credentials_file: ${{ secrets.NEXUS_GEM_CREDENTIALS_FILE }}
+        run: bundle exec rspec
+      - name: Release the gem
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          mkdir -p ~/.gem
+          cat << EOF > ~/.gem/credentials
+          ---
+          :github: Bearer ${GITHUB_TOKEN}
+          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          EOF
+          chmod 0600 ~/.gem/credentials
+          git config user.email "noreply@wealthsimple.com"
+          git config user.name "Wolfbot"
+          bundle exec rake release
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
