@@ -1,0 +1,31 @@
+---
+name: Pipeline
+on: push
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Lint
+        run: bundle exec rubocop
+      - name: Test
+        run: bundle exec rspec
+      - name: Release the gem
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          mkdir -p ~/.gem
+          cat << EOF > ~/.gem/credentials
+          ---
+          :github: Bearer ${GITHUB_TOKEN}
+          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          EOF
+          chmod 0600 ~/.gem/credentials
+          git config user.email "noreply@wealthsimple.com"
+          git config user.name "Wolfbot"
+          bundle exec rake release
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
