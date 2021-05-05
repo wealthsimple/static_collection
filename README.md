@@ -1,5 +1,5 @@
-# 
-[![GitHub Actions Badge](https://github.com/wealthsimple//actions/workflows/main.yml/badge.svg)](https://github.com/wealthsimple//actions)
+# static_collection
+[![GitHub Actions Badge](https://github.com/wealthsimple/static_collection/actions/workflows/main.yml/badge.svg)](https://github.com/wealthsimple/static_collection/actions)
 
 Rubygem for running basic queries against static data.
 

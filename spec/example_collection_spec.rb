@@ -1,14 +1,14 @@
 require "yaml"
 
 class ExampleCollection < StaticCollection::Base
-  set_source YAML.load_file("./spec/fixtures/us_states.yml"), defaults: {contiguous: true}
+  set_source YAML.load_file("./spec/fixtures/us_states.yml"), defaults: { contiguous: true }
 end
 
 describe ExampleCollection do
   describe ".find_by_{attribute}" do
     context "Maine" do
       it "returns a single record corresponding to the query" do
-        maine = described_class.find_by_code("ME")
+        maine = described_class.find_by(code: "ME")
         expect(maine).to be_present
         expect(maine.code).to eq("ME")
         expect(maine.name).to eq("Maine")
@@ -18,7 +18,7 @@ describe ExampleCollection do
 
     context "Hawaii" do
       it "returns a single record corresponding to the query" do
-        hawaii = described_class.find_by_code("HI")
+        hawaii = described_class.find_by(code: "HI")
         expect(hawaii).to be_present
         expect(hawaii.code).to eq("HI")
         expect(hawaii.name).to eq("Hawaii")
@@ -28,7 +28,7 @@ describe ExampleCollection do
 
     context "invalid query" do
       it "returns nil" do
-        invalid = described_class.find_by_code("INVALID")
+        invalid = described_class.find_by(code: "INVALID")
         expect(invalid).to be_nil
       end
     end
@@ -118,8 +118,8 @@ describe ExampleCollection do
   end
 
   describe "#as_json" do
-    subject { described_class.find_by_code("ME").as_json }
+    subject { described_class.find_by(code: "ME").as_json }
 
-    it { is_expected.to eq({"code" => "ME", "name" => "Maine", "contiguous" => true}) }
+    it { is_expected.to eq({ "code" => "ME", "name" => "Maine", "contiguous" => true }) }
   end
 end

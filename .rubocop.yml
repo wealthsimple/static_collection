@@ -1,0 +1,18 @@
+inherit_gem:
+  ws-style:
+    - default.yml
+
+Metrics/AbcSize:
+  Exclude:
+    - lib/static_collection.rb
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - lib/static_collection.rb
+Metrics/PerceivedComplexity:
+  Exclude:
+    - lib/static_collection.rb
+
+RSpec/RepeatedExampleGroupBody:
+  Exclude:
+    - spec/example_collection_spec.rb
+
