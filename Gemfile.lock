@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    static_collection (0.2.1)
+    static_collection (0.3.0)
       activesupport (>= 4)
 
 GEM
@@ -91,4 +91,4 @@ DEPENDENCIES
   ws-style
 
 BUNDLED WITH
-   2.2.16
+   2.2.32

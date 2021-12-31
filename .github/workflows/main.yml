@@ -9,15 +9,28 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        ruby-version: [2.7.5, 3.0.3, 3.1.0]
     steps:
       - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          ruby-version: ${{ matrix.ruby-version }}
       - name: Lint
         run: bundle exec rubocop
       - name: Test
         run: bundle exec rspec
+
+  # Separate `release` job from `build`, as we only want release to be run once
+  # and not run for each ruby version in the matrix:
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
       - name: Release the gem
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
