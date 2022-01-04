@@ -28,11 +28,15 @@ jobs:
   # and not run for each ruby version in the matrix:
   release:
     name: Release
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     needs: build
     runs-on: ubuntu-20.04
     steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
       - name: Release the gem
-        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ~/.gem
           cat << EOF > ~/.gem/credentials
