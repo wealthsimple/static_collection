@@ -18,12 +18,10 @@ GEM
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     json (2.6.3)
-    language_server-protocol (3.17.0.3)
     minitest (5.17.0)
     parallel (1.22.1)
     parser (3.2.0.0)
       ast (~> 2.4.1)
-    prettier_print (1.2.0)
     rack (3.0.4.1)
     rainbow (3.1.1)
     rake (10.5.0)
@@ -71,14 +69,7 @@ GEM
       rubocop-capybara (~> 2.17)
     rubocop-vendor (0.8.10)
       rubocop (>= 0.53.0)
-    ruby-lsp (0.3.8)
-      language_server-protocol (~> 3.17.0)
-      sorbet-runtime
-      syntax_tree (>= 5.0.0, < 6)
     ruby-progressbar (1.11.0)
-    sorbet-runtime (0.5.10647)
-    syntax_tree (5.3.0)
-      prettier_print (>= 1.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
@@ -98,7 +89,6 @@ DEPENDENCIES
   rspec (~> 3.0)
   rspec-its (~> 1.2)
   rubocop (~> 1.2)
-  ruby-lsp (~> 0.3.8)
   static_collection!
   ws-style
 
