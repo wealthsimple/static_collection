@@ -21,7 +21,7 @@ module StaticCollection
         end
         define_singleton_method("find_all_by_#{attribute_name}") do |value|
           ActiveSupport::Deprecation.warn(
-            "find_all_by_#{attribute_name} is deprecated for StaticCollection, "\
+            "find_all_by_#{attribute_name} is deprecated for StaticCollection, " \
             "use where(#{attribute_name}: [value])",
           )
           all.select { |instance| instance.send(attribute_name) == value }
