@@ -8,12 +8,12 @@ concurrency:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        ruby-version: [2.7.5, 3.0.3, 3.1.0, 3.2.0]
+        ruby-version: [3.0.6, 3.1.4, 3.2.2]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Ruby ${{ matrix.ruby-version }}
         uses: ruby/setup-ruby@v1
         with:
@@ -30,9 +30,9 @@ jobs:
     name: Release
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     needs: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
