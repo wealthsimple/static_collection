@@ -20,7 +20,7 @@ describe StaticCollection do
 
   it 'has a bumped version' do
     git = Git.open('.')
-    main_version = get_version(git, 'main')
+    main_version = get_version(git, 'origin/main')
     skip('first time publishing, no need to compare versions') if main_version.nil?
 
     is_main_branch = git.current_branch == 'main'
