@@ -3,6 +3,7 @@ require "static_collection/version"
 
 module StaticCollection
   class Base
+    # rubocop:disable Metrics/MethodLength
     def self.set_source(source, defaults: {})
       raise "Source must be an array" unless source.is_a?(Array)
 
@@ -38,6 +39,7 @@ module StaticCollection
         }
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     def self.find_by(opts)
       all.find { |instance| opts.all? { |k, v| instance.send(k) == v } }
