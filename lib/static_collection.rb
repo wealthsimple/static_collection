@@ -6,9 +6,11 @@ module StaticCollection
     def self.set_source(source, defaults: {})
       raise "Source must be an array" unless source.is_a?(Array)
 
-      instance_variable_set(:@defaults, defaults.stringify_keys)
-      instance_variable_set(:@source, source.map(&:stringify_keys))
-      raise "Source must have at least one value" unless count > 0
+      defaults = defaults.stringify_keys
+      source = source.map(&:stringify_keys)
+      raise "Source must have at least one value" if source.count <= 0
+
+      instance_variable_set(:@all, source.map { |s| new(defaults.merge(s)) })
 
       all.first.attributes.each do |attribute_name, attribute_value|
         # Class methods
@@ -46,8 +48,7 @@ module StaticCollection
     end
 
     def self.all
-      defaults = instance_variable_get(:@defaults)
-      instance_variable_get(:@source).map { |s| new(defaults.merge(s)) }
+      instance_variable_get(:@all)
     end
 
     def self.count
