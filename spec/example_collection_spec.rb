@@ -97,6 +97,14 @@ describe ExampleCollection do
     end
   end
 
+  describe '#attribute?' do
+    it "returns the boolean version of attribute" do
+      expect(described_class.find_by(code: "HI")).to be_magical
+      expect(described_class.find_by(code: "KY")).to be_magical
+      expect(described_class.find_by(code: "CA")).not_to be_magical
+    end
+  end
+
   describe ".count" do
     subject { described_class.count }
 

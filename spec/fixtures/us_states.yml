@@ -22,6 +22,7 @@
 - code: "HI"
   name: "Hawaii"
   contiguous: false
+  magical: true
 - code: "ID"
   name: "Idaho"
 - code: "IL"
@@ -34,6 +35,7 @@
   name: "Kansas"
 - code: "KY"
   name: "Kentucky"
+  magical: "maybe"
 - code: "LA"
   name: "Louisiana"
 - code: "ME"
