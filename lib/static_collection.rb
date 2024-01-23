@@ -11,7 +11,9 @@ module StaticCollection
       source = source.map(&:stringify_keys)
       raise "Source must have at least one value" if source.count <= 0
 
-      instance_variable_set(:@all, source.map { |s| new(defaults.merge(s)) })
+      values = source.map { |s| new(deep_freeze(defaults.merge(s))) }
+
+      instance_variable_set(:@all, values)
 
       all.first.attributes.each do |attribute_name, attribute_value|
         # Class methods
@@ -40,6 +42,27 @@ module StaticCollection
       end
     end
     # rubocop:enable Metrics/MethodLength
+
+    class << self
+      private
+
+      def deep_freeze(obj)
+        case obj
+        when Hash
+          obj.each_with_object({}) do |(key, value), acc|
+            acc[deep_freeze(key)] = deep_freeze(value)
+          end.freeze
+        when Array
+          obj.map do |value|
+            deep_freeze(value)
+          end.freeze
+        when Symbol, Integer, NilClass
+          obj
+        else
+          obj.freeze
+        end
+      end
+    end
 
     def self.find_by(opts)
       all.find { |instance| opts.all? { |k, v| instance.send(k) == v } }
