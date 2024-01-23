@@ -8,14 +8,13 @@ module StaticCollection
       raise "Source must be an array" unless source.is_a?(Array)
 
       defaults = defaults.stringify_keys
-      source = source.map(&:stringify_keys)
       raise "Source must have at least one value" if source.count <= 0
 
-      values = source.map { |s| new(deep_freeze(defaults.merge(s))) }
-
+      values = source.map(&:stringify_keys).map { |s| new(deep_freeze(defaults.merge(s))) }
       instance_variable_set(:@all, values)
 
-      all.first.attributes.each do |attribute_name, attribute_value|
+      all_attribute_names = values.flat_map { |v| v.attributes.keys }.uniq
+      all_attribute_names.each do |attribute_name|
         # Class methods
         define_singleton_method(:"find_by_#{attribute_name}") do |value|
           ActiveSupport::Deprecation.warn(
@@ -34,10 +33,8 @@ module StaticCollection
 
         # Instance methods
         send(:define_method, attribute_name) { attributes[attribute_name] }
-        next unless attribute_value.is_a?(TrueClass) || attribute_value.is_a?(FalseClass)
-
         send(:define_method, "#{attribute_name}?") {
-          attributes[attribute_name]
+          attributes[attribute_name] if attributes.key?(attribute_name)
         }
       end
     end
