@@ -13,30 +13,50 @@ jobs:
       matrix:
         ruby-version: [3.1.4, 3.2.3, 3.3.0]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Set up Ruby ${{ matrix.ruby-version }}
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
           ruby-version: ${{ matrix.ruby-version }}
+
       - name: Lint
         run: bundle exec rubocop
+
       - name: Test
         run: bundle exec rspec
 
-  # Separate `release` job from `build`, as we only want release to be run once
-  # and not run for each ruby version in the matrix:
   release:
     name: Release
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    if: github.ref_name == 'main'
     needs: build
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for version bump
+        id: version-check
+        run: |
+          if git diff --quiet HEAD^ -- lib/static_collection/version.rb; then
+            echo "Version did not change"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version did change"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+          fi
+
       - uses: ruby/setup-ruby@v1
+        if: steps.version-check.outputs.version_changed == 'true'
         with:
           bundler-cache: true
+
       - name: Release the gem
+        if: steps.version-check.outputs.version_changed == 'true'
         run: |
           mkdir -p ~/.gem
           cat << EOF > ~/.gem/credentials
@@ -50,3 +70,12 @@ jobs:
           bundle exec rake release
         env:
           RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+
+      - name: Notify slack on failure
+        if: failure()
+        uses: wealthsimple/github-workflows@v1
+        with:
+          script: toolbox.slack.run()
+          slack_token: ${{ secrets.BEPLAT_PUBLIC_REPOS_SLACK_TOKEN }}
+          slack_channel_id: ${{ vars.DEVELOPER_TOOLS_ALERTS_SLACK_CHANNEL }}
+          slack_template: failed
