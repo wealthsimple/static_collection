@@ -97,7 +97,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Workflow*: "
+                      "text": "*Workflow*: ${{ github.workflow }}"
                     },
                     {
                       "type": "mrkdwn",
@@ -131,7 +131,7 @@ jobs:
                         "type": "plain_text",
                         "text": "View Job"
                       },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{github.run_id}}"
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{github.run_id}}/attempts/${{github.run_attempt}}"
                     }
                   ]
                 }
