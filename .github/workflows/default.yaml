@@ -44,7 +44,7 @@ jobs:
           channel-id: ${{ vars.DEVELOPER_TOOLS_ALERTS_SLACK_CHANNEL }}
           payload: |
             {
-              "text": "GitHub Action failed ${{ github.event.head_commit.url }}."
+              "text": "GitHub Action failed ${{ github.event.head_commit.url }}.",
               "blocks": [
                 {
                   "type": "header",
