@@ -38,13 +38,11 @@ jobs:
         uses: slackapi/slack-github-action@v1.24.0
         env:
           SLACK_BOT_TOKEN: ${{ secrets.BEPLAT_PUBLIC_REPOS_SLACK_TOKEN }}
-          GITHUB_WORKFLOW_RUN_URL:
-            "${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}"
         with:
           channel-id: ${{ vars.DEVELOPER_TOOLS_ALERTS_SLACK_CHANNEL }}
           payload: |
             {
-              "text": "GitHub Action failed ${{ github.event.head_commit.url }}.",
+              "text": "GitHub Action failed ${{ github.event.head_commit.url }}",
               "blocks": [
                 {
                   "type": "header",
@@ -63,7 +61,7 @@ jobs:
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Job*: ${{ env.GITHUB_JOB }}"
+                      "text": "*Job*: ${{ github.job }}"
                     }
                   ]
                 },
@@ -72,15 +70,15 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Project*:\n${{ env.GITHUB_REPOSITORY }}"
+                      "text": "*Project*:\n${{ github.repository }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Branch*:\n${{ env.GITHUB_REF_NAME }}"
+                      "text": "*Branch*:\n${{ github.ref_name }}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*Author*:\n${{ env.GITHUB_ACTOR }}"
+                      "text": "*Author*:\n${{ github.actor }}"
                     }
                   ]
                 },
@@ -93,7 +91,7 @@ jobs:
                         "type": "plain_text",
                         "text": "View Job"
                       },
-                      "url": "${{ env.GITHUB_WORKFLOW_RUN_URL }}"
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{github.run_id}}"
                     }
                   ]
                 }
