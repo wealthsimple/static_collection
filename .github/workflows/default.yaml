@@ -1,0 +1,143 @@
+---
+name: Default
+
+on:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        ruby-version: [3.1.4, 3.2.3, 3.3.0]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          ruby-version: ${{ matrix.ruby-version }}
+
+      - name: Lint
+        run: bundle exec rubocop
+
+      - name: Test
+        run: bundle exec rspec
+
+      - name: Notify slack on failure
+        # if: failure()
+        if: ${{ matrix.ruby-version == '3.1.4' }}
+        uses: slackapi/slack-github-action@v1.24.0
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.BEPLAT_PUBLIC_REPOS_SLACK_TOKEN }}
+          GITHUB_WORKFLOW_RUN_URL:
+            "${{ env.GITHUB_SERVER_URL }}/${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}"
+        with:
+          channel-id: ${{ vars.DEVELOPER_TOOLS_ALERTS_SLACK_CHANNEL }}
+          payload: |
+            {
+              "text": "GitHub Action failed ${{ github.event.head_commit.url }}."
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Job Failed. :red_circle:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Workflow*: "
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Job*: ${{ env.GITHUB_JOB }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project*:\n${{ env.GITHUB_REPOSITORY }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch*:\n${{ env.GITHUB_REF_NAME }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Author*:\n${{ env.GITHUB_ACTOR }}"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${{ env.GITHUB_WORKFLOW_RUN_URL }}"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  release:
+    name: Release
+    if: github.ref_name == 'main'
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for version bump
+        id: version-check
+        run: |
+          if git diff --quiet HEAD^ -- lib/static_collection/version.rb; then
+            echo "Version did not change"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version did change"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: ruby/setup-ruby@v1
+        if: steps.version-check.outputs.version_changed == 'true'
+        with:
+          bundler-cache: true
+
+      - name: Release the gem
+        if: steps.version-check.outputs.version_changed == 'true'
+        run: |
+          mkdir -p ~/.gem
+          cat << EOF > ~/.gem/credentials
+          ---
+          :github: Bearer ${GITHUB_TOKEN}
+          :rubygems_api_key: ${RUBYGEMS_API_KEY}
+          EOF
+          chmod 0600 ~/.gem/credentials
+          git config user.email "noreply@wealthsimple.com"
+          git config user.name "Wolfbot"
+          bundle exec rake release
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
