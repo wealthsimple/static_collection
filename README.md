@@ -21,7 +21,7 @@ Or install it yourself as:
 
 ## Usage
 
-To create a StaticCollection model, inherit from `StaticCollection::Base`
+To create a StaticCollection model, inherit from `StaticCollection::Base`:
 
 ```ruby
 class AccountType < StaticCollection::Base
