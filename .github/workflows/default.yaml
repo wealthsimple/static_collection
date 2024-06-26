@@ -31,6 +31,7 @@ jobs:
 
       - name: Test
         run: bundle exec rspec
+
   release:
     name: Release
     if: github.ref_name == 'main'
